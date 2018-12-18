@@ -1,0 +1,40 @@
+version: '3.3'
+
+services:
+  redis:
+    image: redis:4.0.5-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    volumes:
+      - redis-data:/data
+
+  rabbit:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "4369:4369"
+      - "5672:5672"
+      - "15672:15672"
+      - "15671:15671"
+      - "25672:25672"
+      - "35197:35197"
+    expose:
+      - "15672"
+      - "15671"
+    environment:
+      - RABBITMQ_USE_LONGNAME=true
+      - RABBITMQ_LOGS=/var/log/rabbitmq/rabbit.log
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+      - rabbit_logs:/var/log/rabbitmq
+
+volumes:
+  redis-data:
+  rabbit_data:
+  rabbit_logs:
+
