@@ -1,6 +1,17 @@
 version: '3.3'
 
 services:
+
+  publisher:
+    build:
+      context: ./publisher
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbit
+      - redis
+    environment:
+      - RABBIT=rabbitmq
+      - REDIS=redis
   redis:
     image: redis:4.0.5-alpine
     command: ["redis-server", "--appendonly", "yes"]
@@ -16,6 +27,7 @@ services:
   rabbit:
     image: rabbitmq:3-management
     container_name: rabbitmq
+    hostname: rabbitmq-internal
     ports:
       - "4369:4369"
       - "5672:5672"
@@ -38,3 +50,4 @@ volumes:
   rabbit_data:
   rabbit_logs:
 
+#docker-compose -f .\docker-compose.yml up

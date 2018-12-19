@@ -13,8 +13,10 @@ RUN /usr/bin/pip3.6 install -r requirements.txt && rm requirements.txt
 
 # Copy project
 COPY ./src /app
-#CMD [ "python3.6", "/app/pub.py" ]
-CMD /bin/bash
+
+ENV RABBIT rabbitmq-internal
+CMD [ "/usr/bin/python3.6", "/app/pub.py" ]
+#CMD /bin/bash
 WORKDIR /app/pub
 
 # Sample to use:
