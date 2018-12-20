@@ -3,11 +3,12 @@ import time
 import os
 import sys
 
+exchange_name = os.environ['FRIEND_EXCHANGE']
 
 def connect_to_rabbit():
 
 
-    time.sleep(30)
+    #time.sleep(30)
 
     rabbit = os.environ['RABBIT']
     print(os.environ['RABBIT'])
@@ -25,16 +26,21 @@ if __name__ == '__main__':
     sys.stdout.flush()
 
     connection, channel = connect_to_rabbit()
-    channel.queue_declare(queue='hello')
+    # This will create the exchange if it doesn't already exist.
+    channel.exchange_declare(exchange=exchange_name, exchange_type='topic', durable=True)
+    #channel.queue_declare(queue='hello')
 
     print(" Connected to rabbit!'")
     sys.stdout.flush()
 
     while 1:
-        channel.basic_publish(exchange='',
-                              routing_key='hello',
-                              body='Hello World!')
-        print(" [x] Sent 'Hello World!'")
+        channel.basic_publish(exchange=exchange_name,
+                              routing_key='friend.hello.skot',
+                              body='Hello Skot!',
+                              properties=pika.BasicProperties(delivery_mode=2)
+                              )
+
+        print(" [x] Sent 'Hello Skot!'")
         sys.stdout.flush()
         time.sleep(10)
 

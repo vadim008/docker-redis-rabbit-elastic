@@ -16,9 +16,10 @@ COPY ./src /app
 
 ENV RABBIT rabbitmq-internal
 ENV FRIEND_EXCHANGE friends-talk
-CMD [ "/usr/bin/python3.6", "/app/pub.py" ]
+
+CMD [ "/usr/bin/python3.6", "/app/consumer.py" ]
 #CMD /bin/bash
-WORKDIR /app/pub
+WORKDIR /app/consumer
 
 # Sample to use:
 #   docker build . -t publisher
