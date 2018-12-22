@@ -3,31 +3,47 @@ import time
 import os
 import sys
 
+exchange_name = os.environ['FRIEND_EXCHANGE'] if "FRIEND_EXCHANGE" in os.environ else "friends-talk"
+routing_key = os.environ['ROUTING_KEY'] if "ROUTING_KEY" in os.environ else "friends.talk.back"
 
-exchange_name = os.environ['FRIEND_EXCHANGE']
 
 def connect_to_rabbit():
 
 
     #time.sleep(30)
+    rabbit = os.environ['RABBIT'] if "RABBIT" in os.environ else "127.0.0.1"
 
-    rabbit = os.environ['RABBIT']
-    print(os.environ['RABBIT'])
+    print(rabbit)
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(rabbit))
     channel = connection.channel()
 
     return (connection, channel)
 
-def got_the_message(channel, method, properties, body):
-    print(" [s] GET:" + str(body))
+def got_the_message(m_channel, m_method, m_properties, body):
+  #  channel.basic_ack(delivery_tag=method.delivery_tag)
+    print(" [s] Poshel v jopu :" + str(body))
     sys.stdout.flush()
 
+   # queue = channel.queue_declare(queue=m_properties.reply_to)
+
+    channel.basic_publish(exchange = "",
+                          routing_key=m_properties.reply_to,
+                          properties=pika.BasicProperties(
+                          reply_to="no reply",
+                          correlation_id="asddsa",
+                           ),
+                               body="cho nado")
+
+    # channel.basic_publish(exchange="",
+    #                            routing_key=properties.reply_to,
+    #                            properties=properties,
+    #                            body=" [s] Poshel v jopu :")
 
 
 if __name__ == '__main__':
-
-    print(" Starting publisher!'")
+    time.sleep(30)
+    print(" Starting CONSUMER!'")
     sys.stdout.flush()
 
     connection, channel = connect_to_rabbit()
@@ -36,7 +52,7 @@ if __name__ == '__main__':
     sys.stdout.flush()
 
     queue = channel.queue_declare(queue='hello', exclusive=True).method.queue
-    channel.queue_bind(exchange=exchange_name, queue=queue, routing_key='friend.*.*')
+    channel.queue_bind(exchange=exchange_name, queue=queue, routing_key='friends.*.*')
 
     print("Bind Queque !!!!")
     sys.stdout.flush()

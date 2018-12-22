@@ -9,11 +9,14 @@ services:
     depends_on:
         - rabbit
         - redis
-
     environment:
-      - RABBIT=rabbitmq
+      - RABBIT=rabbit
       - REDIS=redis
-      - FRIEND_EXCHANGE=friends_exchange
+      - FRIEND_EXCHANGE=friends-talk
+    ports:
+      - "12344:12344"
+    expose:
+      - "12344"
     restart: on-failure
 
   consumer:
@@ -24,11 +27,9 @@ services:
         - rabbit
         - redis
         - publisher
-
     environment:
-      - RABBIT=rabbitmq
+      - RABBIT=rabbit
       - REDIS=redis
-      - FRIEND_EXCHANGE=friends_exchange
     restart: on-failure
 
   redis:

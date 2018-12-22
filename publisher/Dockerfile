@@ -14,8 +14,9 @@ RUN /usr/bin/pip3.6 install -r requirements.txt && rm requirements.txt
 # Copy project
 COPY ./src /app
 
-ENV RABBIT rabbitmq-internal
+ENV RABBIT rabbit
 ENV FRIEND_EXCHANGE friends-talk
+ENV ROUTING_KEY friends.talk.flask
 CMD [ "/usr/bin/python3.6", "/app/pub.py" ]
 #CMD /bin/bash
 WORKDIR /app/pub
