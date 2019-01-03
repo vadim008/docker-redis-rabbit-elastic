@@ -14,9 +14,7 @@ services:
       - REDIS=redis
       - FRIEND_EXCHANGE=friends-talk
     ports:
-      - "12344:12344"
-    expose:
-      - "12344"
+      - "5000:5000/tcp"
     restart: on-failure
 
   consumer:
@@ -34,7 +32,7 @@ services:
 
   redis:
     image: redis:4.0.5-alpine
-    command: ["redis-server", "--appendonly", "yes"]
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "ppp"]
     hostname: redis
     container_name: redis
     ports:

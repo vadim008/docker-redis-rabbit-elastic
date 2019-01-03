@@ -2,6 +2,7 @@ import pika
 import time
 import os
 import sys
+import redis
 
 exchange_name = os.environ['FRIEND_EXCHANGE'] if "FRIEND_EXCHANGE" in os.environ else "friends-talk"
 routing_key = os.environ['ROUTING_KEY'] if "ROUTING_KEY" in os.environ else "friends.talk.back"
@@ -22,7 +23,11 @@ def connect_to_rabbit():
 
 def got_the_message(m_channel, m_method, m_properties, body):
   #  channel.basic_ack(delivery_tag=method.delivery_tag)
-    print(" [s] Poshel v jopu :" + str(body))
+    print(" From rabbitMQ :" + str(body))
+    sys.stdout.flush()
+
+    payload = r.lpop("payload")
+    print(" Consumer from redis :" + str(payload))
     sys.stdout.flush()
 
    # queue = channel.queue_declare(queue=m_properties.reply_to)
@@ -42,6 +47,10 @@ def got_the_message(m_channel, m_method, m_properties, body):
 
 
 if __name__ == '__main__':
+
+    redis_host = os.environ['REDIS'] if "REDIS" in os.environ else "127.0.0.1"
+    r = redis.Redis(host=redis_host, port=6379, password="ppp")
+
     time.sleep(30)
     print(" Starting CONSUMER!'")
     sys.stdout.flush()
